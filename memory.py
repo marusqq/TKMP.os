@@ -6,7 +6,6 @@ __email__ = "pozniak.marius@gmail.com"
 
 class Memory:
 
-
     def __init__(self, name):
         self.name = name
         print(name)
