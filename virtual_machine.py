@@ -12,7 +12,7 @@ class VM:
         super().__init__()
 
 
-    def task(self, command):
+    def execute(self, command):
         
         print("\tCommand used: ", command)
         commands = command.split()
@@ -25,54 +25,54 @@ class VM:
             '''data moving'''
         #3.5.1.1
         elif commands[0] == 'RMW':
-            print('\tread the word in XY and put it to RA and RB as word')
+            print('\t read the word in XY and put it to RA and RB as word')
 
         #3.5.1.2
-        elif commands[0] == 'RMI' and len(commands) == 3:
-            print('\tread the word in XY and put it in RA and RB as number')
+        elif commands[0] == 'RMI':
+            print('\t read the word in XY and put it in RA and RB as number')
 
         #3.5.2 
             '''arythmetic commands'''
         #3.5.2.1
-        elif commands[0] == 'ADD' and len(commands) == 1:
-            print('\tadding RA + RB to RC')
+        elif commands[0] == 'ADD':
+            print('\t adding RA + RB to RC')
 
         #3.5.2.2
-        elif commands[0] == 'SUB' and len(commands) == 1:
-            print('\tremoving RA - RB to RC')
+        elif commands[0] == 'SUB':
+            print('\t removing RA - RB to RC')
 
         #3.5.2.3    
-        elif commands[0] == 'CMP' and len(commands) == 1:
-            print('\tcompares RA and RB')
+        elif commands[0] == 'CMP':
+            print('\t compares RA and RB')
 
         #3.5.3
             '''control commands'''
         #3.5.3.1
-        elif commands[0] == 'JP' and len(commands) == 3:
-            print('\tjumps to xy')
+        elif commands[0] == 'JP':
+            print('\t jumps to xy')
         
         #3.5.3.2
-        elif commands[0] == 'JE' and len(commands) == 3:
-            print('\tjumps to xy. if c == 0')
+        elif commands[0] == 'JE':
+            print('\t jumps to xy. if c == 0')
 
         #3.5.3.3
-        elif commands[0] == 'JG' and len(commands) == 3:
-            print('\tjumps to xy. if c == 1')
+        elif commands[0] == 'JG':
+            print('\t jumps to xy. if c == 1')
         
         #3.5.3.4
-        elif commands[0] == 'HALT' and len(commands) == 1:
-            print('\tends the program')
+        elif commands[0] == 'HALT':
+            print('Halt should be entered after CODE')
 
         #3.5.4
             '''input / output commands'''
         #3.5.4.1
-        elif commands[0] == 'OUT' and len(commands) == 1:
+        elif commands[0] == 'OUT':
             print('\toutputing RC')
 
-        elif commands[0] == 'RDW' and len(commands) == 3:
+        elif commands[0] == 'RDW':
             print('\treading input and putting it in RA, RB as symbols')
 
-        elif commands[0] == 'RDI' and len(commands) == 3:
+        elif commands[0] == 'RDI':
             print('\treading input and putting it in RA, RB as numbers') 
         
         else:
@@ -116,17 +116,16 @@ class VM:
 
     def run_code(self, code, single = False):
         
-
         if single:
             print('running single line of code...')
             #print(code)
-            VM.task(self, code)
+            VM.execute(self, code)
             return
         else:
             print('running more than a single line of code')
             for line in code:
                 print(line)
-                VM.task(self, line)
+                VM.execute(self, line)
 
     def check_functions(self, words_of_code):
         '''function to check input and return true if everything is ok'''
@@ -171,6 +170,6 @@ class VM:
         else:
             return False
         
-
+    #def _add(self, ra, rb)
 
 
