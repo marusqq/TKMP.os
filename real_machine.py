@@ -4,6 +4,9 @@
 __author__ = "Marius Pozniakovas, Tomas Kučejevas"
 __email__ = "pozniak.marius@gmail.com"
 
+import os
+import virtual_machine as VM
+
 class RM:
 
     def __init__(self):
@@ -35,34 +38,46 @@ class RM:
         RM.menu(self)
 
     def menu(self):
+        err = None
+        
         while True:
-            print('')
+            os.system('cls')
+
             print('------  Main menu  -------')
             print('Command line \t\t 1')
             print('Read from HDD \t\t 2')
             print('Print all the memory \t 3')
             print('Exit \t\t\t 4')
+            print("Last input: ", err)
+            print('--------------------------')
 
             menu_choice = input('Input your choice: ')
 
             if menu_choice == '1':
                 print('command line opened')
-                break
+                err = 'command line'
+                vm = VM.VM()
+                vm.collect_input()
+                
+                #break
 
             elif menu_choice == '2':
                 print('read from hdd')
-                break
+                err = 'hdd'
+                #break
 
             elif menu_choice == '3':
                 print('printing memory')
-                break
+                err = 'memory'
+                #break
 
             elif menu_choice == '4':
                 print('exiting')
+                err = 'exiting'
                 break
 
             else:
-                print('wrong input') 
+                err = 'Wrong input.' 
 
 
     
