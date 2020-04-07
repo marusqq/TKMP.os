@@ -6,6 +6,7 @@ __email__ = "pozniak.marius@gmail.com"
 
 import os
 import virtual_machine as VM
+import memory as mem
 
 class RM:
 
@@ -140,12 +141,20 @@ class RM:
     #functions
     def _add(self):
         '''RC = RA + RB'''
-        self._rc = int(self._ra) + int(self._rb)
+        if(self._c == 0):
+            self._rc = int(self._ra) + int(self._rb)
+            mem.check_size(self._rc)
+        else:
+            print("C != 0, aborting operation")
         return
 
     def _sub(self):
         '''RC = RA - RB'''
-        self._rc = int(self._ra) - int(self._rb)
+        if(self._c == 0):
+            self._rc = int(self._ra) - int(self._rb)
+            mem.check_size(self._rc)
+        else:
+            print("C != 0, aborting operation")
         return
 
     def _cmp(self):

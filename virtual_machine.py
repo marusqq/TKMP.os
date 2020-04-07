@@ -6,6 +6,7 @@ __email__ = "pozniak.marius@gmail.com"
 
 import os
 import real_machine as RM
+import memory as mem
 
 DEBUG = False
 
