@@ -6,11 +6,10 @@ __email__ = "pozniak.marius@gmail.com"
 
 class Memory:
 
-    def __init__(self, name):
-        self.name = name
-        print(name)
+    def __init__(self):
+        super().__init__()
 
-    def check_size(var):
+    def check_size(self, var):
         if(var > pow(2,32)):
             sys.exit("Variable overflow, exiting")
         else:

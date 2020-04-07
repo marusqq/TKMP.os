@@ -6,7 +6,7 @@ __email__ = "pozniak.marius@gmail.com"
 
 import os
 import virtual_machine as VM
-import memory as mem
+import memory as me
 
 class RM:
 
@@ -41,6 +41,7 @@ class RM:
         self._c = 0
 
         print('RM created.')
+        self.mem = me.Memory()
         RM.menu(self)
 
     def menu(self):
@@ -143,7 +144,7 @@ class RM:
         '''RC = RA + RB'''
         if(self._c == 0):
             self._rc = int(self._ra) + int(self._rb)
-            mem.check_size(self._rc)
+            self.mem.check_size(self._rc)
         else:
             print("C != 0, aborting operation")
         return
@@ -152,7 +153,7 @@ class RM:
         '''RC = RA - RB'''
         if(self._c == 0):
             self._rc = int(self._ra) - int(self._rb)
-            mem.check_size(self._rc)
+            self.mem.check_size(self._rc)
         else:
             print("C != 0, aborting operation")
         return
