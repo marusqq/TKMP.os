@@ -49,7 +49,7 @@ class RM:
 
     def menu(self):
         '''function that takes care of menu and then splits the workflow'''
-        err = None
+        last_action = None
         
         while True:
             os.system('cls')
@@ -59,24 +59,23 @@ class RM:
             print('Read from HDD \t\t 2')
             print('Print registers \t 3')
             print('Exit \t\t\t q')
-            print("Last input: ", err)
+            print("Last action: ", last_action)
             print('--------------------------')
 
             menu_choice = input('Input your choice: ')
 
             if menu_choice == '1':
-                err = 'Input'
+                last_action = 'Command line'
                 vm = VM.VM(self)
                 vm.start_console()
 
             elif menu_choice == '2':
-                print('read from hdd')
-                err = 'HDD'
+                last_action = 'Read from HDD'
                 #break
 
             elif menu_choice == '3':
                 os.system('cls')
-                err = 'Memory'
+                last_action = 'Print registers'
                 print('------   Registers   -------')
                 print('Paging')
                 print('---')
@@ -114,11 +113,11 @@ class RM:
                 #break
 
             elif menu_choice == 'q':
-                err = 'exiting'
+                last_action = 'Exiting'
                 break
 
             else:
-                err = 'Wrong Input' 
+                last_action = 'Wrong Input' 
 
     #------------------
     #functions
