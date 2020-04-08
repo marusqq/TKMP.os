@@ -7,6 +7,7 @@ __email__ = "pozniak.marius@gmail.com"
 import os
 import virtual_machine as VM
 import memory as me
+import interrupts as inte
 
 class RM:
 
@@ -58,6 +59,7 @@ class RM:
             print('Command line \t\t 1')
             print('Read from HDD \t\t 2')
             print('Print registers \t 3')
+            print('Print memory \t\t 4')
             print('Exit \t\t\t q')
             print("Last action: ", last_action)
             print('--------------------------')
@@ -112,6 +114,11 @@ class RM:
                 _input = input('Press enter to exit to main menu\n')
                 #break
 
+            elif menu_choice == '4':
+                print('TODO')
+                last_action = 'Print memory'
+                _input = input('Press enter to exit to main menu\n')
+
             elif menu_choice == 'q':
                 last_action = 'Exiting'
                 break
@@ -123,11 +130,12 @@ class RM:
     #functions
     def _add(self):
         '''RC = RA + RB'''
-        if(self._c == 0):
+        #if(self._c == 0):
+        int_value = inte.PI_interrupt(self, 'overflow')
+        if int_value is None:
             self._rc = int(self._ra) + int(self._rb)
-            self.mem.check_size(self._rc)
         else:
-            print("C != 0, aborting operation")
+            print("INTERRUPT PI", int_value)
         return
 
     def _sub(self):
