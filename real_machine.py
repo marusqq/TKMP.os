@@ -43,7 +43,7 @@ class RM:
         self._c = 0
         
         #also create memory
-        self.mem = me.Memory()
+        self.mem = me.Memory(0)
 
         #start by menu
         RM.menu(self)
