@@ -8,6 +8,8 @@ import os
 import real_machine as RM
 import memory as mem
 import interrupts as inte
+import sys
+
 
 class VM:
     
@@ -106,7 +108,12 @@ class VM:
                     print('Press enter to return to main menu')
                     _input = input()
                     break
-
+                elif _input == 'STOP':
+                    print(self.rm._check_mode())
+                    if(self.rm._check_mode() == 0):
+                        sys.exit('Stopping the machine')
+                    else:
+                        print('Insufficient privileges')
                 #execute any function if it syntax is ok
                 else:
                     VM.run_code(self, _input, single=True)
@@ -162,7 +169,7 @@ class VM:
         while True:
             os.system('cls')
             print('There is two ways to enter the code:')
-            print('1. Just enter command after command and it will be compiled after each line.\nHALT to exit\n')
+            print('1. Just enter command after command and it will be compiled after each line.\nHALT to exit, STOP to stop the machine (supervisor only)\n')
             print('2. Start by entering CODE and then enter commands in each line and finish with HALT.\nThen all block will be executed instantly\n')
         
             _input = input('Enter mode to use: \n')

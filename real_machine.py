@@ -8,6 +8,8 @@ import os
 import virtual_machine as VM
 import memory as me
 import interrupts as inte
+import sys
+
 
 class RM:
 
@@ -20,8 +22,8 @@ class RM:
         #command reading
         self._ic = 0
 
-        #mode
-        self._mode = 0
+        #mode user mode by default
+        self._mode = 1
         
         #interrupts
         self._ti = 10
@@ -56,10 +58,12 @@ class RM:
             os.system('cls')
 
             print('------  Main menu  -------')
+            print('MODE:', self._mode)
             print('Command line \t\t 1')
             print('Read from HDD \t\t 2')
             print('Print registers \t 3')
             print('Print memory \t\t 4')
+            print('Change mode \t\t 5')
             print('Exit \t\t\t q')
             print("Last action: ", last_action)
             print('--------------------------')
@@ -119,6 +123,19 @@ class RM:
                 last_action = 'Print memory'
                 _input = input('Press enter to exit to main menu\n')
 
+            elif menu_choice == '5':
+                if(self._mode == 0):
+                    self._mode = 1
+                    print('MODE set to 1')
+                elif(self._mode == 1):
+                    pw = input("Please enter the password:")
+                    if(pw == 'admin'):
+                        self._mode = 0
+                        print('MODE set to 0')
+                    else:
+                        print('The password is incorrect')
+
+
             elif menu_choice == 'q':
                 last_action = 'Exiting'
                 break
@@ -163,6 +180,9 @@ class RM:
         
         return
     
+    def _check_mode(self):
+        return self._mode
+    
     def _rmw(self):
         '''TODO'''
         return
@@ -185,6 +205,10 @@ class RM:
 
     def _halt(self):
         print('Halting')
+        return
+
+    def _stop(self):
+        sys.exit('Stopping')
         return
 
     def _out(self):

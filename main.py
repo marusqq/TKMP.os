@@ -5,5 +5,6 @@ __author__ = "Marius Pozniakovas, Tomas Kučejevas"
 __email__ = "pozniak.marius@gmail.com"
 
 import real_machine as RM
+import sys
 
 rm = RM.RM()
