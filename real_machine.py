@@ -132,10 +132,11 @@ class RM:
         '''RC = RA + RB'''
         #if(self._c == 0):
         int_value = inte.PI_interrupt(self, 'overflow')
-        if int_value is None:
+        if int_value is not None:
+            return
+        else:    
             self._rc = int(self._ra) + int(self._rb)
-        else:
-            print("INTERRUPT PI", int_value)
+
         return
 
     def _sub(self):

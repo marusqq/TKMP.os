@@ -7,6 +7,7 @@ __email__ = "pozniak.marius@gmail.com"
 import os
 import real_machine as RM
 import memory as mem
+import interrupts as inte
 
 DEBUG = False
 
@@ -14,6 +15,7 @@ class VM:
     
     def __init__(self, rm):
         self.rm = rm
+        self.codes = None
 
     def execute(self, command):
         '''execute command depending on what you send'''
@@ -87,19 +89,19 @@ class VM:
     def collecting_console_code(self, memory_start, memory_end):
         '''function to wait for HALT and collect code lines'''
         
-        codes = []
-        code_line = None
+        code_line = input()
         
         while True:
             if code_line != 'HALT':
-                codes.append(code_line)
+                self.codes.append(code_line)
+                code_line = input()
             else:
                 VM.run_code(self, code=codes, single=False)
                 print('Press enter to return to main menu')
                 _input = input()
                 break
 
-    def console(self, mode = '1'):
+    def console(self, mode = 'quit'):
         '''splits console to modes and continues the workflow'''
 
         print('------     Console      -------')
@@ -109,25 +111,20 @@ class VM:
             while True:
                 _input = input()
                 
+                #check for syntax errors
+                int_value = inte.PI_interrupt(obj = self.rm, codes = _input, modes = 'operation')
+                if int_value is not None:
+                    break
+                
                 #exit with HALT
-                if _input == 'HALT':
+                elif _input == 'HALT':
                     print('Press enter to return to main menu')
                     _input = input()
                     break
-                
-                #start mode 2 with CODE
-                elif _input == 'CODE':
-                    VM.console(mode = 2)
-                    return
 
                 #execute any function if it syntax is ok
-                elif VM.check_functions(self, _input):
-                    VM.run_code(self, _input, single=True)
-
-                #bad syntax of one line function
                 else:
-                    print('Bad function')
-                    #PI = 1
+                    VM.run_code(self, _input, single=True)
 
         #MULTI LINE MODE
         elif mode == '2':
@@ -138,11 +135,15 @@ class VM:
                 if _input == 'CODE':
                     #VM.collecting_console_code(memory_start, memory_end)
                     VM.collecting_console_code(self, 0000, 8000)
-                
+                    break
+
                 #not started with CODE
                 else: 
                     print('You must start with CODE')
-                    #PI = 1 
+                    #PI = 1
+        
+        elif mode == 'quit':
+            return
 
     def start_console(self):
         '''script to start the console, takes no arguments'''
@@ -165,50 +166,6 @@ class VM:
             for line in code:
                 VM.execute(self, line)
             return
-
-    def check_functions(self, words_of_code):
-        '''function to check input and return true if everything is ok'''
-        
-        words_of_code = words_of_code.split()
-        if DEBUG:
-            print('\tChecking this =>', words_of_code, len(words_of_code))
-        
-        if words_of_code is None or len(words_of_code) == 0:
-            return False
-        #--------------
-        elif words_of_code[0] == 'CODE' and len(words_of_code) == 1:
-            return True
-        #--------------
-        elif words_of_code[0] == 'RMW' and len(words_of_code) == 3:
-            return True
-        elif words_of_code[0] == 'RMI' and len(words_of_code) == 3:
-            return True
-        #--------------
-        elif words_of_code[0] == 'ADD' and len(words_of_code) == 1:
-            return True
-        elif words_of_code[0] == 'SUB' and len(words_of_code) == 1:
-            return True
-        elif words_of_code[0] == 'CMP' and len(words_of_code) == 1:
-            return True
-        #--------------
-        elif words_of_code[0] == 'JP' and len(words_of_code) == 3:
-            return True
-        elif words_of_code[0] == 'JE' and len(words_of_code) == 3:
-            return True
-        elif words_of_code[0] == 'JG' and len(words_of_code) == 3:
-            return True
-        elif words_of_code[0] == 'HALT' and len(words_of_code) == 1:
-            return True
-        #--------------
-        elif words_of_code[0] == 'OUT' and len(words_of_code) == 1:
-            return True
-        elif words_of_code[0] == 'RDW' and len(words_of_code) == 3: #and isinstance(words_of_code[1], int) and isinstance(words_of_code[2], int):
-            return True
-        elif words_of_code[0] == 'RDI' and len(words_of_code) == 3: #and isinstance(words_of_code[1], int) and isinstance(words_of_code[2], int):
-            return True
-        #--------------
-        else:
-            return False
 
     def consoleInfo(self):
         '''function to choose console mode'''
