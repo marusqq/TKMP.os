@@ -50,12 +50,12 @@ def PI_interrupt(obj, modes, codes = None, single_line = False):
             int(obj._si)      > ONE_BYTE * 1 or + \
             int(obj._pi)      > ONE_BYTE * 1 or + \
             int(obj._ioi)     > ONE_BYTE * 1 or + \
-            int(obj._ch1)     > int(1)       or + \
-            int(obj._ch2)     > int(1)       or + \
-            int(obj._ch3)     > int(1)       or + \
             int(obj._ra)      > ONE_BYTE * 4 or + \
             int(obj._rb)      > ONE_BYTE * 4 or + \
             int(obj._rc)      > ONE_BYTE * 4 or + \
+            int(obj._ch1)     > int(1)       or + \
+            int(obj._ch2)     > int(1)       or + \
+            int(obj._ch3)     > int(1)       or + \
             int(obj._c)      > 1:
                 obj._pi = 4
                 input("INTERRUPT PI " + str(obj._pi) + '\n')
