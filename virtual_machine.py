@@ -9,26 +9,21 @@ import real_machine as RM
 import memory as mem
 import interrupts as inte
 
-DEBUG = False
-
 class VM:
     
     def __init__(self, rm):
         self.rm = rm
-        self.codes = None
+        self.codes = []
 
     def execute(self, command):
         '''execute command depending on what you send'''
         
         commands = command.split()
         
-        if DEBUG:
-            print("\tCommands used: ", commands)
-        
         #3.5.1
-            '''data moving'''
+        '''data moving'''
         #3.5.1.1
-        elif commands[0] == 'RMW':
+        if commands[0] == 'RMW':
             '''TODO: Pridet XY'''
             self.rm._rmw()
         #3.5.1.2
@@ -80,9 +75,6 @@ class VM:
 
         elif commands[0] == 'RDI':
             self.rm._rdi(commands[1], commands[2])
-        
-        else:
-            print('\tWrong input!')
 
         return command
                     
@@ -96,9 +88,7 @@ class VM:
                 self.codes.append(code_line)
                 code_line = input()
             else:
-                VM.run_code(self, code=codes, single=False)
-                print('Press enter to return to main menu')
-                _input = input()
+                VM.run_code(self, code=self.codes, single=False)
                 break
 
     def console(self, mode = 'quit'):
@@ -111,13 +101,8 @@ class VM:
             while True:
                 _input = input()
                 
-                #check for syntax errors
-                int_value = inte.PI_interrupt(obj = self.rm, codes = _input, modes = 'operation')
-                if int_value is not None:
-                    break
-                
                 #exit with HALT
-                elif _input == 'HALT':
+                if _input == 'HALT':
                     print('Press enter to return to main menu')
                     _input = input()
                     break
@@ -125,6 +110,7 @@ class VM:
                 #execute any function if it syntax is ok
                 else:
                     VM.run_code(self, _input, single=True)
+                    break
 
         #MULTI LINE MODE
         elif mode == '2':
@@ -133,15 +119,15 @@ class VM:
 
                 #start with CODE
                 if _input == 'CODE':
-                    #VM.collecting_console_code(memory_start, memory_end)
                     VM.collecting_console_code(self, 0000, 8000)
                     break
 
                 #not started with CODE
-                else: 
-                    print('You must start with CODE')
-                    #PI = 1
-        
+                else:
+                    int_value = inte.PI_interrupt(obj = self.rm, codes = 'NOT_STARTED_WITH_CODE', modes = 'operation')
+                    if int_value is not None:
+                        break
+                
         elif mode == 'quit':
             return
 
@@ -155,17 +141,20 @@ class VM:
         '''runs the code sent, if more than one code line is sent
         single = False, then cycles through code lines and executes them'''
         
+        #check for bad functions ant throw an interrupt
+        inte.PI_interrupt(self.rm, modes = 'operation', codes = code, single_line=single)
+
+        #single line of code, mode = 1
         if single:
-            if DEBUG:
-                print('running single line of code...')
             VM.execute(self, code)
-            return
+
+        #multiline code, mode = 2
         else:
-            if DEBUG:
-                print('running more than a single line of code')
             for line in code:
                 VM.execute(self, line)
-            return
+        
+        _input = input('Press enter to return to main menu\n')
+        return
 
     def consoleInfo(self):
         '''function to choose console mode'''

@@ -8,7 +8,7 @@ __email__ = "pozniak.marius@gmail.com"
 ONE_BYTE = int(255)
 
 
-def PI_interrupt(obj, codes, modes):
+def PI_interrupt(obj, modes, codes = None, single_line = False):
     '''returns a number of interrupt to PI register
     input:
     modes = operation, address, HDD, overflow, arythmetical
@@ -24,13 +24,21 @@ def PI_interrupt(obj, codes, modes):
     #1. check for wrong operation
     if 'operation' in modes:
         
-        print(len(codes))
-
-        for code in codes:
-            if not check_functions(code):
+        #check singleline
+        if single_line:
+            if not check_functions(codes):
                 obj._pi = 1
                 input("INTERRUPT PI " + str(obj._pi) + '\n')
                 return obj._pi
+
+
+        #check multiline
+        else:
+            for code in codes:
+                if not check_functions(code):
+                    obj._pi = 1
+                    input("INTERRUPT PI " + str(obj._pi) + '\n')
+                    return obj._pi
 
 
     #4. check for overflow
