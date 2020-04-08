@@ -59,6 +59,7 @@ class RM:
 
             print('------  Main menu  -------')
             print('MODE:', self._mode)
+            print('--------------------------')
             print('Command line \t\t 1')
             print('Read from HDD \t\t 2')
             print('Print registers \t 3')
@@ -124,16 +125,14 @@ class RM:
                 _input = input('Press enter to exit to main menu\n')
 
             elif menu_choice == '5':
+                last_action = 'Change mode'
                 if(self._mode == 0):
                     self._mode = 1
-                    print('MODE set to 1')
                 elif(self._mode == 1):
-                    pw = input("Please enter the password:")
+                    pw = input("Please enter the password:\n")
                     if(pw == 'admin'):
                         self._mode = 0
-                        print('MODE set to 0')
-                    else:
-                        print('The password is incorrect')
+                    
 
 
             elif menu_choice == 'q':
