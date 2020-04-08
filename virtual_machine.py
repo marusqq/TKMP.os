@@ -109,8 +109,8 @@ class VM:
                     _input = input()
                     break
                 elif _input == 'STOP':
-                    print(self.rm._check_mode())
-                    if(self.rm._check_mode() == 0):
+                    '''TODO: move this to interrupts.py'''
+                    if(self.rm.mem.get_register('MODE') == 0):
                         sys.exit('Stopping the machine')
                     else:
                         print('Insufficient privileges')

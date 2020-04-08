@@ -15,37 +15,49 @@ class RM:
 
     def __init__(self):
         '''create all the registers'''
+
+        #also create memory
+        self.mem = me.Memory()
         
         #paging
-        self._ptr = 0
+        #ptr
+        self.mem.change_memory('0-0', '0000')
         
         #command reading
-        self._ic = 0
+        #ic
+        self.mem.change_memory('0-1', '0000')
 
         #mode user mode by default
-        self._mode = 1
-        
+        #mode
+        self.mem.change_memory('0-2', '0001')
+
         #interrupts
-        self._ti = 10
-        self._si = 0
-        self._pi = 0
-        self._ioi = 0
+        #ti
+        self.mem.change_memory('1-0', '0010')
+
+        #si
+        self.mem.change_memory('1-1', '0000')
+
+        #pi
+        self.mem.change_memory('1-2', '0000')
+        
+        #ioi
+        self.mem.change_memory('1-3', '0000')
 
         #channel registers
-        self._ch1 = 0
-        self._ch2 = 0
-        self._ch3 = 0
-
+        #ch1
+        self.mem.change_memory('2-0', '0000')
+        #ch2
+        self.mem.change_memory('2-1', '0000')
+        #ch3
+        self.mem.change_memory('2-2', '0000')
+    
         #random usage registers
-        self._ra = 0
-        self._rb = 0
-        self._rc = 0
-
+        self.mem.change_memory('3-0', '0000')
+        self.mem.change_memory('3-1', '0000')
+        self.mem.change_memory('3-2', '0000')
         #true/false register
-        self._c = 0
-        
-        #also create memory
-        self.mem = me.Memory(0)
+        self.mem.change_memory('3-3', '0000')
 
         #start by menu
         RM.menu(self)
@@ -58,7 +70,7 @@ class RM:
             os.system('cls')
 
             print('------  Main menu  -------')
-            print('MODE:', self._mode)
+            print('MODE:', self.mem.get_register('MODE'))
             print('--------------------------')
             print('Command line \t\t 1')
             print('Read from HDD \t\t 2')
@@ -86,55 +98,53 @@ class RM:
                 print('------   Registers   -------')
                 print('Paging')
                 print('---')
-                print('PTR \t\t\t ', self._ptr)
+                print('PTR \t\t\t ', self.mem.get_register('PTR'))
                 print('----------------------------')
                 print('Mode')
                 print('---')
-                print('MODE \t\t\t ', self._mode)
+                print('MODE \t\t\t ', self.mem.get_register('MODE'))
                 print('----------------------------')
                 print('Command Reading')
                 print('---')
-                print('IC \t\t\t ', self._ic)
+                print('IC \t\t\t ', self.mem.get_register('IC'))
                 print('----------------------------')
                 print('Interrupts')
                 print('---')
-                print('TI \t\t\t ', self._ti)
-                print('SI \t\t\t ', self._si)
-                print('PI \t\t\t ', self._pi)
-                print('IOI \t\t\t ', self._ioi)
+                print('TI \t\t\t ', self.mem.get_register('TI'))
+                print('SI \t\t\t ', self.mem.get_register('SI'))
+                print('PI \t\t\t ', self.mem.get_register('PI'))
+                print('IOI \t\t\t ', self.mem.get_register('IOI'))
                 print('----------------------------')
                 print('Random Usage')
                 print('---')
-                print('RA \t\t\t ', self._ra)
-                print('RB \t\t\t ', self._rb)
-                print('RC \t\t\t ', self._rc)
-                print('C \t\t\t ', self._c)
+                print('RA \t\t\t ', self.mem.get_register('RA'))
+                print('RB \t\t\t ', self.mem.get_register('RB'))
+                print('RC \t\t\t ', self.mem.get_register('RC'))
+                print('C \t\t\t ', self.mem.get_register('C'))
                 print('----------------------------')
                 print('Channel Usage')
                 print('---')
-                print('CH1 \t\t\t ', self._ch1)
-                print('CH2 \t\t\t ', self._ch2)
-                print('CH3 \t\t\t ', self._ch3)
+                print('CH1 \t\t\t ', self.mem.get_register('CH1'))
+                print('CH2 \t\t\t ', self.mem.get_register('CH2'))
+                print('CH3 \t\t\t ', self.mem.get_register('CH3'))
                 print('----------------------------')
                 _input = input('Press enter to exit to main menu\n')
                 #break
 
             elif menu_choice == '4':
-                print('TODO')
+                self.mem.print_memory()
                 last_action = 'Print memory'
                 _input = input('Press enter to exit to main menu\n')
 
             elif menu_choice == '5':
                 last_action = 'Change mode'
-                if(self._mode == 0):
-                    self._mode = 1
-                elif(self._mode == 1):
+                if(self.mem.get_register('MODE') == 0):
+                    self.mem.set_register('MODE', 1)
+                elif(self.mem.get_register('MODE') == 1):
                     pw = input("Please enter the password:\n")
                     if(pw == 'admin'):
-                        self._mode = 0
+                        self.mem.set_register('MODE', 0)
                     
-
-
             elif menu_choice == 'q':
                 last_action = 'Exiting'
                 break
@@ -146,22 +156,16 @@ class RM:
     #functions
     def _add(self):
         '''RC = RA + RB'''
-        #if(self._c == 0):
-        int_value = inte.PI_interrupt(self, 'overflow')
-        if int_value is not None:
-            return
-        else:    
-            self._rc = int(self._ra) + int(self._rb)
-
+        int_value = inte.PI_interrupt(self, modes=['overflow', 'arytmetical'])
+        if int_value is None:
+            self.mem.set_register('RC', self.mem.get_register('RA') + self.mem.get_register('RB'))    
         return
 
     def _sub(self):
         '''RC = RA - RB'''
-        if(self._c == 0):
-            self._rc = int(self._ra) - int(self._rb)
-            self.mem.check_size(self._rc)
-        else:
-            print("C != 0, aborting operation")
+        int_value = inte.PI_interrupt(self, modes=['overflow', 'arytmetical'])
+        if int_value is None:
+            self.mem.set_register('RC', self.mem.get_register('RA') - self.mem.get_register('RB'))    
         return
 
     def _cmp(self):
@@ -178,9 +182,6 @@ class RM:
             self._rc = 2
         
         return
-    
-    def _check_mode(self):
-        return self._mode
     
     def _rmw(self):
         '''TODO'''

@@ -5,7 +5,10 @@ __author__ = "Marius Pozniakovas, Tomas Kučejevas"
 __email__ = "pozniak.marius@gmail.com"
 '''script used to call different interrupts'''
 
-ONE_BYTE = int(255)
+ONE_BYTE    = int(255)
+TWO_BYTES   = int(255) * int(255)
+THREE_BYTES = int(255) * int(255) * int(255)
+FOUR_BYTES  = int(255) * int(255) * int(255) * int(255)
 
 
 def PI_interrupt(obj, modes, codes = None, single_line = False):
@@ -27,39 +30,40 @@ def PI_interrupt(obj, modes, codes = None, single_line = False):
         #check singleline
         if single_line:
             if not check_functions(codes):
-                obj._pi = 1
-                input("INTERRUPT PI " + str(obj._pi) + '\n')
-                return obj._pi
+                obj.mem.set_register('PI', 1)
+                input("INTERRUPT PI " + str(obj.mem.get_register('PI')) + '\n')
+                return obj.mem.get_register('PI')
 
 
         #check multiline
         else:
             for code in codes:
                 if not check_functions(code):
-                    obj._pi = 1
-                    input("INTERRUPT PI " + str(obj._pi) + '\n')
-                    return obj._pi
+                    obj.mem.set_register('PI', 1)
+                    input("INTERRUPT PI " + str(obj.mem.get_register('PI')) + '\n')
+                    return obj.mem.get_register('PI')
 
 
     #4. check for overflow
     if 'overflow' in modes:
-        if int(obj._ptr)      > ONE_BYTE * 4 or + \
-            int(obj._ic)      > ONE_BYTE * 2 or + \
-            int(obj._mode)    > ONE_BYTE * 1 or + \
-            int(obj._ti)      > ONE_BYTE * 1 or + \
-            int(obj._si)      > ONE_BYTE * 1 or + \
-            int(obj._pi)      > ONE_BYTE * 1 or + \
-            int(obj._ioi)     > ONE_BYTE * 1 or + \
-            int(obj._ra)      > ONE_BYTE * 4 or + \
-            int(obj._rb)      > ONE_BYTE * 4 or + \
-            int(obj._rc)      > ONE_BYTE * 4 or + \
-            int(obj._ch1)     > int(1)       or + \
-            int(obj._ch2)     > int(1)       or + \
-            int(obj._ch3)     > int(1)       or + \
-            int(obj._c)      > 1:
-                obj._pi = 4
-                input("INTERRUPT PI " + str(obj._pi) + '\n')
-                return obj._pi   
+        if obj.mem.get_register('PTR')      > FOUR_BYTES   or + \
+            obj.mem.get_register('IC')      > TWO_BYTES    or + \
+            obj.mem.get_register('MODE')    > ONE_BYTE     or + \
+            obj.mem.get_register('TI')      > ONE_BYTE     or + \
+            obj.mem.get_register('SI')      > ONE_BYTE     or + \
+            obj.mem.get_register('PI')      > ONE_BYTE     or + \
+            obj.mem.get_register('IOI')     > ONE_BYTE     or + \
+            obj.mem.get_register('RA')      > FOUR_BYTES   or + \
+            obj.mem.get_register('RB')      > FOUR_BYTES   or + \
+            obj.mem.get_register('RC')      > FOUR_BYTES   or + \
+            obj.mem.get_register('CH1')     > int(1)       or + \
+            obj.mem.get_register('CH2')     > int(1)       or + \
+            obj.mem.get_register('CH3')     > int(1)       or + \
+            obj.mem.get_register('C')       > 1:
+
+                obj.mem.set_register('PI', 4)
+                input("INTERRUPT PI " + str(obj.mem.get_register('PI')) + '\n')
+                return obj.mem.get_register('PI')   
     
     return None
 
