@@ -10,6 +10,7 @@ class Memory:
         super().__init__()
 
     def check_size(self, var):
+        '''checks size'''
         if(var > pow(2,32)):
             sys.exit("Variable overflow, exiting")
         else:

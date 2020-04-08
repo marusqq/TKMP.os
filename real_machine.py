@@ -11,6 +11,7 @@ import memory as me
 class RM:
 
     def __init__(self):
+        '''create all the registers'''
         
         #paging
         self._ptr = 0
@@ -39,9 +40,11 @@ class RM:
 
         #true/false register
         self._c = 0
-
-        print('RM created.')
+        
+        #also create memory
         self.mem = me.Memory()
+
+        #start by menu
         RM.menu(self)
 
     def menu(self):
@@ -64,7 +67,7 @@ class RM:
             if menu_choice == '1':
                 err = 'Input'
                 vm = VM.VM(self)
-                vm.collect_input()
+                vm.start_console()
 
             elif menu_choice == '2':
                 print('read from hdd')
@@ -116,27 +119,6 @@ class RM:
 
             else:
                 err = 'Wrong Input' 
-
-    def setRA(self, RA):
-        self._ra = RA
-
-    def setRB(self, RB):
-        self._rb = RB
-
-    def setRC(self, RC):
-        self._rc = RC
-
-    def getRA(self):
-        return self._ra
-
-    def getRB(self):
-        return self._rb
-
-    def getRC(self):
-        return self._rc
-
-    def getC(self):
-        return self._c
 
     #------------------
     #functions
