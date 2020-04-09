@@ -70,7 +70,10 @@ class RM:
             os.system('cls')
 
             print('------  Main menu  -------')
-            print('MODE:', self.mem.get_register('MODE'))
+            if self.mem.get_register('MODE') == 0:
+                print('Mode: Admin')
+            else:
+                print('Mode: User')
             print('--------------------------')
             print('Command line \t\t 1')
             print('Read from HDD \t\t 2')
@@ -95,39 +98,7 @@ class RM:
             elif menu_choice == '3':
                 os.system('cls')
                 last_action = 'Print registers'
-                print('------   Registers   -------')
-                print('Paging')
-                print('---')
-                print('PTR \t\t\t ', self.mem.get_register('PTR'))
-                print('----------------------------')
-                print('Mode')
-                print('---')
-                print('MODE \t\t\t ', self.mem.get_register('MODE'))
-                print('----------------------------')
-                print('Command Reading')
-                print('---')
-                print('IC \t\t\t ', self.mem.get_register('IC'))
-                print('----------------------------')
-                print('Interrupts')
-                print('---')
-                print('TI \t\t\t ', self.mem.get_register('TI'))
-                print('SI \t\t\t ', self.mem.get_register('SI'))
-                print('PI \t\t\t ', self.mem.get_register('PI'))
-                print('IOI \t\t\t ', self.mem.get_register('IOI'))
-                print('----------------------------')
-                print('Random Usage')
-                print('---')
-                print('RA \t\t\t ', self.mem.get_register('RA'))
-                print('RB \t\t\t ', self.mem.get_register('RB'))
-                print('RC \t\t\t ', self.mem.get_register('RC'))
-                print('C \t\t\t ', self.mem.get_register('C'))
-                print('----------------------------')
-                print('Channel Usage')
-                print('---')
-                print('CH1 \t\t\t ', self.mem.get_register('CH1'))
-                print('CH2 \t\t\t ', self.mem.get_register('CH2'))
-                print('CH3 \t\t\t ', self.mem.get_register('CH3'))
-                print('----------------------------')
+                self.mem.print_registers()
                 _input = input('Press enter to exit to main menu\n')
                 #break
 
@@ -172,15 +143,17 @@ class RM:
         ''' RA == RB ---> RC = 0
             RA < RB  ---> RC = 1
             RA > RB  ---> RC = 2 '''
-        if self._ra == self._rb:
-            self._rc = 0
+        int_value = inte.PI_interrupt(self, modes = 'arytmetical')
+        if int_value is None:
+            if self.mem.get_register('RA') == self.mem.get_register('RB'):
+                self.mem.set_register('RC', 0)
 
-        elif self._ra < self._rb:
-            self._rc = 1
+            elif self.mem.get_register('RA') < self.mem.get_register('RB'):
+                self.mem.set_register('RC', 1)
 
-        elif self._ra > self._rb:
-            self._rc = 2
-        
+            elif self.mem.get_register('RA') > self.mem.get_register('RB'):
+                self.mem.set_register('RC', 1)
+            
         return
     
     def _rmw(self):
@@ -212,17 +185,25 @@ class RM:
         return
 
     def _out(self):
-        print('RC =', self._rc)
+        print('[ RC =', self.mem.get_register('RC'), ']')
         return
 
     def _rdw(self, a, b):
-        self._ra = a
-        self._rb = b
-        self._c = 1
+        self.mem.set_register('RA', a)
+        self.mem.set_register('RB', b)
+        self.mem.set_register('RC', 1)
         return
     
     def _rdi(self, a, b):
-        self._ra = a
-        self._rb = b
-        self._c = 0
+        self.mem.set_register('RA', a)
+        self.mem.set_register('RB', b)
+        self.mem.set_register('RC', 0)
+        return
+
+    def _mrw(self, loc_a, loc_b):
+        '''TODO'''
+        return
+
+    def _mri(self, loc_a, loc_b):
+        '''TODO'''
         return

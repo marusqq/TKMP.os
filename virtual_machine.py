@@ -6,9 +6,8 @@ __email__ = "pozniak.marius@gmail.com"
 
 import os
 import real_machine as RM
-import memory as mem
-import interrupts as inte
 import sys
+import interrupts as inte
 
 
 class VM:

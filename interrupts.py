@@ -43,6 +43,13 @@ def PI_interrupt(obj, modes, codes = None, single_line = False):
                     input("INTERRUPT PI " + str(obj.mem.get_register('PI')) + '\n')
                     return obj.mem.get_register('PI')
 
+    #2. check for wrong address
+    if 'address' in modes:
+        return None
+
+    #3. check for HDD something
+    if 'HDD' in modes:
+        return None
 
     #4. check for overflow
     if 'overflow' in modes:
@@ -65,6 +72,15 @@ def PI_interrupt(obj, modes, codes = None, single_line = False):
                 input("INTERRUPT PI " + str(obj.mem.get_register('PI')) + '\n')
                 return obj.mem.get_register('PI')   
     
+
+     #5. check for arythmetical
+    if 'arytmetical' in modes:
+        if obj.mem.get_register('C') != 0:
+            
+            obj.mem.set_register('PI', 5)
+            input("INTERRUPT PI " + str(obj.mem.get_register('PI')) + '\n')
+            return obj.mem.get_register('PI')
+
     return None
 
 def SI_interrupt(obj):

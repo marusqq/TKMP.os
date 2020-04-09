@@ -27,8 +27,7 @@ class Memory:
         'RA'    :   '3-0',
         'RB'    :   '3-1',
         'RC'    :   '3-2',
-        'C'     :   '3-3'
-    }
+        'C'     :   '3-3'}
 
     def __init__(self):
         
@@ -49,6 +48,33 @@ class Memory:
         '''change memory on loc with new_data'''
         self.memory[loc] = str(new_data)
     
+    def print_registers(self):
+        '''prints registers'''
+
+        os.system('cls')
+        print('------   Registers   -------')
+        print('----------------------------')
+        print('PTR \t\t\t ', self.get_register('PTR'))
+        print('MODE \t\t\t ', self.get_register('MODE'))
+        print('IC \t\t\t ', self.get_register('IC'))
+        print('----------------------------')
+        print('TI \t\t\t ', self.get_register('TI'))
+        print('SI \t\t\t ', self.get_register('SI'))
+        print('PI \t\t\t ', self.get_register('PI'))
+        print('IOI \t\t\t ', self.get_register('IOI'))
+        print('----------------------------')
+        print('RA \t\t\t ', self.get_register('RA'))
+        print('RB \t\t\t ', self.get_register('RB'))
+        print('RC \t\t\t ', self.get_register('RC'))
+        print('C \t\t\t ', self.get_register('C'))
+        print('----------------------------')
+        print('CH1 \t\t\t ', self.get_register('CH1'))
+        print('CH2 \t\t\t ', self.get_register('CH2'))
+        print('CH3 \t\t\t ', self.get_register('CH3'))
+        print('----------------------------')
+        
+        return
+
     def print_memory(self):
         '''prints all the memory in a good way'''
         os.system('cls')
@@ -89,4 +115,6 @@ class Memory:
             return
         except KeyError:
             return
-        
+    
+    def add_code_to_memory(self, code):
+        return   
