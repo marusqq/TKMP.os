@@ -116,5 +116,6 @@ class Memory:
         except KeyError:
             return
     
-    def add_code_to_memory(self, code):
+    def save_code_to_memory(self, code):
+        
         return   

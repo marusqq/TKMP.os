@@ -83,7 +83,9 @@ class VM:
         '''function to wait for HALT and collect code lines'''
         
         code_line = input()
-        
+        self.rm.mem.save_code_to_memory(code_line)
+        quit("quit")
+
         while True:
             if code_line != 'HALT':
                 self.codes.append(code_line)
