@@ -117,5 +117,9 @@ class Memory:
             return
     
     def save_code_to_memory(self, code):
-        
+
+        #ADD, SUB, CMP
+        #
+
+
         return   
