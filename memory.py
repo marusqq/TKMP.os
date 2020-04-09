@@ -11,23 +11,28 @@ class Memory:
 
     register_addresses = {
         #system
-        'PTR'   :   '0-0',
-        'IC'    :   '0-1',
-        'MODE'  :   '0-2',
+        'PTR'   :   '00',
+        'IC'    :   '01',
+        'MODE'  :   '02',
         #interrupts
-        'TI'    :   '1-0',
-        'SI'    :   '1-1',
-        'PI'    :   '1-2',
-        'IOI'   :   '1-3',
+        'TI'    :   '10',
+        'SI'    :   '11',
+        'PI'    :   '12',
+        'IOI'   :   '13',
         #channel registers
-        'CH1'   :   '2-0',
-        'CH2'   :   '2-1',
-        'CH3'   :   '2-2',
+        'CH1'   :   '20',
+        'CH2'   :   '21',
+        'CH3'   :   '22',
         #random usage
-        'RA'    :   '3-0',
-        'RB'    :   '3-1',
-        'RC'    :   '3-2',
-        'C'     :   '3-3'}
+        'RA'    :   '30',
+        'RB'    :   '31',
+        'RC'    :   '32',
+        'C'     :   '33'}
+
+    NO_ARG_FUNCTIONS = ['ADD', 'SUB', 'CMP', 'OUT']
+    TWO_ARG_FUNCTIONS = ['JP', 'JE', 'JG', 'RDW', 'RDI', 'RMW', 'RMI', 'MRW', 'MRI']
+
+    
 
     def __init__(self):
         
@@ -35,7 +40,7 @@ class Memory:
         memory_key = []
         for i in range(0, 256):
             for j in range(0, 4):
-                index = (str(format(i, 'x')).upper() + '-' + str(j))
+                index = (str(format(i, 'x')).upper() + str(j))
                 memory_key.append(index)
         
         #create all the 0 
@@ -117,9 +122,30 @@ class Memory:
             return
     
     def save_code_to_memory(self, code):
+        '''saves one line of code to registers'''
+        
+        #get the first word of the code
+        code = code.split()
+        first_word = code[0]
 
-        #ADD, SUB, CMP
-        #
+        #we always encode it
+        save_hex = first_word.encode('utf-8').hex()
+
+        #also add numbers if its a two arg function
+        if first_word in self.TWO_ARG_FUNCTIONS:
+            save_hex = str(format(int(code[1]), 'x')).upper() + str(format(int(code[2]), 'x')).upper() + save_hex
+
+        #add a space
+        save_hex = save_hex + '..'
+
+        #take it to memory
+        for index in range(0, len(save_hex), 2):
+            byte = (save_hex[index] + save_hex[index+1])
+            print(byte, 'to', self.get_register('PTR'))
+            self.change_memory(str(self.get_register('PTR')), byte.zfill(4))
+            self.set_register('PTR', self.get_register('PTR') + 1)
+            
+
 
 
         return   

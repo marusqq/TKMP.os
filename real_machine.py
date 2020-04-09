@@ -21,43 +21,43 @@ class RM:
         
         #paging
         #ptr
-        self.mem.change_memory('0-0', '0000')
+        self.mem.set_register('PTR', '40')
         
         #command reading
         #ic
-        self.mem.change_memory('0-1', '0000')
+        self.mem.set_register('IC', '0000')
 
         #mode user mode by default
-        #mode
-        self.mem.change_memory('0-2', '0001')
+        #mode)
+        self.mem.set_register('MODE', '0001')
 
         #interrupts
         #ti
-        self.mem.change_memory('1-0', '0010')
+        self.mem.set_register('TI', '0010')
 
         #si
-        self.mem.change_memory('1-1', '0000')
+        self.mem.set_register('SI', '0000')
 
         #pi
-        self.mem.change_memory('1-2', '0000')
+        self.mem.set_register('PI', '0000')
         
         #ioi
-        self.mem.change_memory('1-3', '0000')
+        self.mem.set_register('IOI', '0000')
 
         #channel registers
         #ch1
-        self.mem.change_memory('2-0', '0000')
+        self.mem.set_register('CH1', '0000')
         #ch2
-        self.mem.change_memory('2-1', '0000')
+        self.mem.set_register('CH2', '0000')
         #ch3
-        self.mem.change_memory('2-2', '0000')
+        self.mem.set_register('CH3', '0000')
     
         #random usage registers
-        self.mem.change_memory('3-0', '0000')
-        self.mem.change_memory('3-1', '0000')
-        self.mem.change_memory('3-2', '0000')
+        self.mem.set_register('RA', '0000')
+        self.mem.set_register('RB', '0000')
+        self.mem.set_register('RC', '0000')
         #true/false register
-        self.mem.change_memory('3-3', '0000')
+        self.mem.set_register('C', '0000')
 
         #start by menu
         RM.menu(self)

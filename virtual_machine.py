@@ -79,16 +79,15 @@ class VM:
 
         return command
                     
-    def collecting_console_code(self, memory_start, memory_end):
+    def collecting_console_code(self):
         '''function to wait for HALT and collect code lines'''
         
+        #initial code
         code_line = input()
-        self.rm.mem.save_code_to_memory(code_line)
-        quit("quit")
 
         while True:
             if code_line != 'HALT':
-                self.codes.append(code_line)
+                self.rm.mem.save_code_to_memory(code_line)
                 code_line = input()
             else:
                 VM.run_code(self, code=self.codes, single=False)
@@ -117,8 +116,8 @@ class VM:
                         print('Insufficient privileges')
                 #execute any function if it syntax is ok
                 else:
-                    VM.run_code(self, _input, single=True)
-                    break
+                    if not VM.run_code(self, _input, single=True):
+                        break
 
         #MULTI LINE MODE
         elif mode == '2':
@@ -127,7 +126,7 @@ class VM:
 
                 #start with CODE
                 if _input == 'CODE':
-                    VM.collecting_console_code(self, 0000, 8000)
+                    VM.collecting_console_code(self)
                     break
 
                 #not started with CODE
@@ -147,11 +146,13 @@ class VM:
 
     def run_code(self, code, single = False):
         '''runs the code sent, if more than one code line is sent
-        single = False, then cycles through code lines and executes them'''
+        single = False, then cycles through code lines and executes them
+        returns False interrupt is thrown in code'''
         
         #check for bad functions ant throw an interrupt
-        inte.PI_interrupt(self.rm, modes = 'operation', codes = code, single_line=single)
-
+        int_value = inte.PI_interrupt(self.rm, modes = 'operation', codes = code, single_line=single)
+        if int_value is not None:
+            return False
         #single line of code, mode = 1
         if single:
             VM.execute(self, code)
@@ -161,8 +162,8 @@ class VM:
             for line in code:
                 VM.execute(self, line)
         
-        _input = input('Press enter to return to main menu\n')
-        return
+        #_input = input('Press enter to return to main menu\n')
+        return True
 
     def consoleInfo(self):
         '''function to choose console mode'''
