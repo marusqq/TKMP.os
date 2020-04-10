@@ -20,4 +20,3 @@
 	- Delete or implement TI and timer (from the code and documentation)
 	- Delete or implement paging (from documentation only)
 	- Delete or implement IC (from the code and documentation)
-	-
