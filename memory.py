@@ -11,23 +11,23 @@ class Memory:
 
     register_addresses = {
         #system
-        'PTR'   :   '00',
-        'IC'    :   '01',
-        'MODE'  :   '02',
+        'PTR'   :   '0000',
+        'IC'    :   '0001',
+        'MODE'  :   '0002',
         #interrupts
-        'TI'    :   '10',
-        'SI'    :   '11',
-        'PI'    :   '12',
-        'IOI'   :   '13',
+        'TI'    :   '0010',
+        'SI'    :   '0011',
+        'PI'    :   '0012',
+        'IOI'   :   '0013',
         #channel registers
-        'CH1'   :   '20',
-        'CH2'   :   '21',
-        'CH3'   :   '22',
+        'CH1'   :   '0020',
+        'CH2'   :   '0021',
+        'CH3'   :   '0022',
         #random usage
-        'RA'    :   '30',
-        'RB'    :   '31',
-        'RC'    :   '32',
-        'C'     :   '33'}
+        'RA'    :   '0030',
+        'RB'    :   '0031',
+        'RC'    :   '0032',
+        'C'     :   '0033'}
 
     NO_ARG_FUNCTIONS = ['ADD', 'SUB', 'CMP', 'OUT']
     TWO_ARG_FUNCTIONS = ['JP', 'JE', 'JG', 'RDW', 'RDI', 'RMW', 'RMI', 'MRW', 'MRI']
@@ -40,7 +40,7 @@ class Memory:
         memory_key = []
         for i in range(0, 256):
             for j in range(0, 4):
-                index = (str(format(i, 'x')).upper() + str(j))
+                index = (str(format(i, 'x')).upper() + str(j)).zfill(4)
                 memory_key.append(index)
         
         #create all the 0 
@@ -92,7 +92,7 @@ class Memory:
             else:
                 print(key, ' : ', value)
                 counter = 1
-        print('-------------------------------------------------------------')
+        print('------------------------ Registers --------------------------')
         counter = 1
         for key, value in self.memory.items():
             if counter != 4:
@@ -101,6 +101,11 @@ class Memory:
             elif counter == 4:
                 print(key, ' : ', value)
                 counter = 1
+            
+            if key == '0033':
+                print('----------------------- Code Memory Below -------------------')
+            elif key == '09F3':
+                print('----------------------- Usable memory -----------------------')
 
     def get_memory(self, loc):
         return self.memory[loc]
@@ -129,23 +134,89 @@ class Memory:
         first_word = code[0]
 
         #we always encode it
-        save_hex = first_word.encode('utf-8').hex()
+        save_hex = first_word.encode('utf-8').hex().upper()
 
         #also add numbers if its a two arg function
         if first_word in self.TWO_ARG_FUNCTIONS:
-            save_hex = str(format(int(code[1]), 'x')).upper() + str(format(int(code[2]), 'x')).upper() + save_hex
+            save_hex = save_hex + str(format(int(code[1]), 'x')).upper() + str(format(int(code[2]), 'x')).upper()
 
         #add a space
         save_hex = save_hex + '..'
 
+        times_added = 0
+
         #take it to memory
         for index in range(0, len(save_hex), 2):
-            byte = (save_hex[index] + save_hex[index+1])
-            print(byte, 'to', self.get_register('PTR'))
-            self.change_memory(str(self.get_register('PTR')), byte.zfill(4))
-            self.set_register('PTR', self.get_register('PTR') + 1)
             
+            #take hexed chars
+            byte = save_hex[index] + save_hex[index+1]
+                
+            if times_added == 0:
+                full_byte = byte
+                times_added = times_added + 1
 
+            elif times_added == 1:
+                full_byte = full_byte + byte
+                times_added = 0
+                self.change_memory(str(self.get_memory(self.register_addresses['PTR'])), full_byte)
+                self.move_to_another_memory_cell()
 
+        return
 
-        return   
+    def move_to_another_memory_cell(self):
+        '''checks if the next memory cell is ok'''
+
+        current_ptr = (self.get_memory(self.register_addresses['PTR']))
+        #current_ptr = 'E52'
+        #for example if we have E52
+        front = current_ptr[:-1] #this will be E5
+        end_last = current_ptr[-1] #this will be 2
+        
+        #check if end is 0,1,2, if yes add one more
+        #if end is 3, we can't add one more, so we add in the first part
+        
+        if end_last in ('0','1','2'):
+            number = front + str(int(end_last) + 1)
+            self.set_register('PTR', number)
+            
+        else:
+            hex_value = (int(front, base = 16)) + 1
+            number = (str(format(hex_value, 'x')).upper()) + '0'
+            self.set_register('PTR', number)
+  
+    def read_memory_for_code(self):
+        '''reads memory and finds a code part'''
+        #(str(self.get_memory(self.register_addresses['PTR'])))
+        word = ''
+
+        while True:
+            
+            #get two letters
+            command = self.get_memory((str(self.get_memory(self.register_addresses['PTR']))))
+
+            #i think we found no code
+            if command == '0000':
+                return None
+            
+            first_part, second_part = command[:int(len(command)//2)], command[int(len(command)//2):]
+
+            #this is a space after code
+            if first_part != '..':
+                first_word = chr(int(first_part, 16))
+                word = word + first_word
+            
+            else:
+                self.move_to_another_memory_cell()
+                break
+            
+            if second_part != '..':
+                second_word = chr(int(second_part, 16))
+                word = word + second_word
+            
+            else:
+                self.move_to_another_memory_cell()
+                break
+
+            self.move_to_another_memory_cell()
+
+        return word

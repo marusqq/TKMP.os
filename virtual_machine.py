@@ -9,6 +9,7 @@ import real_machine as RM
 import sys
 import interrupts as inte
 
+        
 
 class VM:
     
@@ -77,19 +78,21 @@ class VM:
         elif commands[0] == 'RDI':
             self.rm._rdi(commands[1], commands[2])
 
+        '''TODO: add two more commands'''
+
         return command
                     
     def collecting_console_code(self):
         '''function to wait for HALT and collect code lines'''
-        
-        #initial code
-        code_line = input()
 
         while True:
+            code_line = input()
+
             if code_line != 'HALT':
                 self.rm.mem.save_code_to_memory(code_line)
-                code_line = input()
+                
             else:
+                self.rm.mem.set_register('PTR', '0040')
                 VM.run_code(self, code=self.codes, single=False)
                 break
 
@@ -153,17 +156,20 @@ class VM:
         int_value = inte.PI_interrupt(self.rm, modes = 'operation', codes = code, single_line=single)
         if int_value is not None:
             return False
+
         #single line of code, mode = 1
         if single:
             VM.execute(self, code)
 
         #multiline code, mode = 2
         else:
-            for line in code:
-                VM.execute(self, line)
-        
-        #_input = input('Press enter to return to main menu\n')
-        return True
+            while True:
+                line = self.rm.mem.read_memory_for_code()
+                if line is not None:
+                    VM.execute(self, line)
+                else:
+                    break
+            return True
 
     def consoleInfo(self):
         '''function to choose console mode'''
@@ -178,4 +184,3 @@ class VM:
             if _input == '1' or _input == '2':
                 os.system('cls')
                 return _input
-
