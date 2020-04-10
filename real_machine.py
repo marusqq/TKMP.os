@@ -53,8 +53,8 @@ class RM:
         self.mem.set_register('CH3', '0000')
     
         #random usage registers
-        self.mem.set_register('RA', '0020')
-        self.mem.set_register('RB', '0030')
+        self.mem.set_register('RA', '0000')
+        self.mem.set_register('RB', '0000')
         self.mem.set_register('RC', '0000')
         #true/false register
         self.mem.set_register('C', '0000')
